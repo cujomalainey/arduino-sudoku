@@ -30,6 +30,8 @@ typedef struct {
 pixel board[9][9];
 uint32_t colors[9];
 
+uint8_t focus_x,focus_y;
+
 void write_pixel(uint8_t x, uint8_t y, uint8_t color_id)
 {
   if (board[x][y].device)
@@ -58,6 +60,17 @@ void setup() {
   shield.begin(); // This initializes the NeoPixel library.
   randomSeed(6798);
   Serial.begin(9600);
+
+  // WHITE IS RESERVED FOR ERRORS
+  colors[0] = shield.Color(20,2,12); //pink
+  colors[1] = shield.Color(20,0,0); // Red
+  colors[2] = shield.Color(20,13,0); // orange
+  colors[3] = shield.Color(20,20,0); // yellow
+  colors[4] = shield.Color(0,20,0); // green
+  colors[5] = shield.Color(0,20,20); // cyan
+  colors[6] = shield.Color(0,0,20); // blue
+  colors[7] = shield.Color(20,0,20); // purple
+  colors[8] = shield.Color(10,10,10);  // grey
 
   // Define where all LEDS are
   // Define primary shield
