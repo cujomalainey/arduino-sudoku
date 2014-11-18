@@ -4,39 +4,86 @@
 #include "Adafruit_NeoPixel.h"
 
 // Which pin on the Arduino is connected to the NeoPixels?
-#define PIN            6
+#define PIN_SHIELD            6
+#define PIN_STICK_1           50
+#define PIN_STICK_2           51
 
 // How many NeoPixels are attached to the Arduino?
-#define NUMPIXELS      40
+#define NUMPIXELS_SHIELD      40
+
+#define NUMPIXELS_STICK       8
+#define SHIELD_DEPTH          8
+#define SHIELD_WIDTH          5
 
 const int amplitude = 10;
 
-// When we setup the NeoPixel library, we tell it how many pixels, and which pin to use to send signals.
-// Note that for older NeoPixel strips you might need to change the third parameter--see the strandtest
-// example for more information on possible values.
-Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel shield = Adafruit_NeoPixel(NUMPIXELS_SHIELD, PIN_SHIELD, NEO_GRB + NEO_KHZ800);
 
-int delayval = 500; // delay for half a second
-uint32_t spot = 0;
-int w_red,p_red,w_green,p_green,w_blue,p_blue;
+typedef struct {
+  uint8_t device;
+  uint8_t pin;
+  uint8_t led;
+  uint8_t color_id;
+  uint8_t locked;
+} pixel;
+
+pixel board[9][9];
+uint32_t colors[9];
+
+void write_pixel(uint8_t x, uint8_t y, uint8_t color_id)
+{
+  if (board[x][y].device)
+  {
+    //write local
+  }
+  else
+  {
+    //write remote
+  }
+}
+
+uint8_t verify()
+{
+
+}
+
+void check_focus()
+{
+  // check if thumbstick wanting to move
+  // if yes, make sure old forcus pixel is set back to color
+  // start flashing new pixel
+}
 
 void setup() {
-  pixels.begin(); // This initializes the NeoPixel library.
+  shield.begin(); // This initializes the NeoPixel library.
   randomSeed(6798);
   Serial.begin(9600);
-  w_red = random(100);
-  p_red = random();
-  w_green = random(100);
-  p_green = random();
-  w_blue = random(100);
-  p_blue = random();
+
+  // Define where all LEDS are
+  // Define primary shield
+  for (int width = 0; width < SHIELD_WIDTH; width++)
+  {
+    for (int depth = 0; depth < SHIELD_DEPTH; depth++)
+    {
+      board[width][depth].device = 0;
+      board[width][depth].pin = 6;
+      board[width][depth].led = depth + SHIELD_DEPTH*width;
+    }
+  }
+  for (int width = SHIELD_WIDTH; width < 9; width++)
+  {
+    for (int depth = 0; depth < SHIELD_DEPTH; depth++)
+    {
+      board[width][depth].device = 1;
+      board[width][depth].pin = 6;
+      board[width][depth].led = depth + SHIELD_DEPTH*(width - SHIELD_WIDTH);
+    }
+  }
 }
 
 void loop() {
   // For a set of NeoPixels the first NeoPixel is 0, second is 1, all the way up to the count of pixels minus one.
-  for(int i=0;i<NUMPIXELS;i++){
-    pixels.setPixelColor(i, pixels.Color((amplitude - 1)*sin((float)w_red*(float)(spot+i)/1800.0 + p_red) + amplitude,(amplitude - 1)*sin((float)w_green*(float)(spot+i)/1800.0 + p_green) + amplitude,(amplitude - 1)*sin((float)w_blue*(float)(spot+i)/1800.0 + p_blue) + amplitude)); // Moderately bright green color.
-  }
-  pixels.show();
-  spot++;
+  uint32_t color = shield.Color(255,255,255);
+  shield.setPixelColor(0, color);
+  shield.show();
 }
