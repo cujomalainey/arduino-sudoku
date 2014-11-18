@@ -80,10 +80,10 @@ void setup() {
   // WHITE IS RESERVED FOR ERRORS
   colors[0] = shield.Color(20,2,12); //pink
   colors[1] = shield.Color(20,0,0); // Red
-  colors[2] = shield.Color(20,10,0); // orange
-  colors[3] = shield.Color(20,20,0); // yellow
-  colors[4] = shield.Color(0,20,0); // green
-  colors[5] = shield.Color(5,16,5);  // lime green
+  colors[2] = shield.Color(11,5,2);  // brown
+  colors[3] = shield.Color(20,10,0); // orange
+  colors[4] = shield.Color(20,20,0); // yellow
+  colors[5] = shield.Color(0,20,0); // green
   colors[6] = shield.Color(0,20,20); // cyan
   colors[7] = shield.Color(0,0,20); // blue
   colors[8] = shield.Color(10,0,20); // purple
@@ -101,9 +101,9 @@ void setup() {
     }
   }
   shield.show();
-  for (int i = 0; i < 8; i++)
+  for (int i = 0; i < 9; i++)
   {
-    shield.setPixelColor(board[2][i].led, colors[i]);
+    shield.setPixelColor(i, colors[i]);
   }
   shield.show();
   for (int width = SHIELD_WIDTH; width < 9; width++)
