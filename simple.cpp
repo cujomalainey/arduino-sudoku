@@ -21,7 +21,7 @@ Adafruit_NeoPixel stick2 = Adafruit_NeoPixel(NUMPIXELS_STICK, PIN_STICK_2, NEO_G
 
 typedef struct {
   uint8_t device;
-  uint8_t pin;
+  uint8_t shield;
   uint8_t led;
   uint8_t color_id;
   uint8_t locked;
@@ -38,18 +38,41 @@ void write_pixel(uint8_t x, uint8_t y, uint8_t color_id)
   if (!board[x][y].device)
   {
     //write local
-    shield.setPixelColor(0, colors[0]);
-    shield.show();
+    if (board[x][y].shield == 0)
+    {
+      shield.show();
+    }
+    else if (board[x][y].shield == 1)
+    {
+      stick1.show();
+    }
+    else if (board[x][y].shield == 2)
+    {
+      stick2.show();
+    }
   }
   else
   {
     //write remote
+    //char str[4] = {"W", x, y, color_id};
+    //Serial1.write(str);
   }
 }
 
 uint8_t verify()
 {
+  // row verification
+  uint8_t verified = 1;
+  for (int x  = 0; x < 9; x++)
+  {
+    uint8_t items[9] = {0};
+    for (int y = 0; y < 9; y++)
+    {
 
+    }
+  }
+  // column verification
+  // sector verification
 }
 
 void check_focus()
@@ -78,25 +101,26 @@ void setup() {
   Serial1.begin(9600);
 
   // WHITE IS RESERVED FOR ERRORS
-  colors[0] = shield.Color(20,2,12); //pink
-  colors[1] = shield.Color(20,0,0); // Red
-  colors[2] = shield.Color(11,5,2);  // brown
-  colors[3] = shield.Color(20,10,0); // orange
-  colors[4] = shield.Color(20,20,0); // yellow
-  colors[5] = shield.Color(0,20,0); // green
-  colors[6] = shield.Color(0,20,20); // cyan
-  colors[7] = shield.Color(0,0,20); // blue
-  colors[8] = shield.Color(10,0,20); // purple
+  colors[0] = shield.Color(20,2,12);   // Pink
+  colors[1] = shield.Color(20,0,0);    // Red
+  colors[2] = shield.Color(11,5,2);    // Brown
+  colors[3] = shield.Color(20,10,0);   // Orange
+  colors[4] = shield.Color(20,20,0);   // Yellow
+  colors[5] = shield.Color(0,20,0);    // Green
+  colors[6] = shield.Color(0,20,20);   // Cyan
+  colors[7] = shield.Color(0,0,20);    // Blue
+  colors[8] = shield.Color(10,0,20);   // Purple
   
 
   // Define where all LEDS are
   // Define primary shield
+  // Shields address from the top left corner going down, this function maps them to an x,y grid
   for (int width = 0; width < SHIELD_WIDTH; width++)
   {
     for (int depth = 0; depth < SHIELD_DEPTH; depth++)
     {
       board[width][depth].device = 0;
-      board[width][depth].pin = 6;
+      board[width][depth].shield = 0;
       board[width][depth].led = 32 + depth - SHIELD_DEPTH*width;
     }
   }
@@ -111,8 +135,8 @@ void setup() {
     for (int depth = 0; depth < SHIELD_DEPTH; depth++)
     {
       board[width][depth].device = 1;
-      board[width][depth].pin = 6;
-      board[width][depth].led = depth + SHIELD_DEPTH*(width - SHIELD_WIDTH);
+      board[width][depth].shield = 0;
+      board[width][depth].led = 32 + depth - SHIELD_DEPTH*(width - SHIELD_WIDTH);
     }
   }
 }
