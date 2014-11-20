@@ -61,18 +61,61 @@ void write_pixel(uint8_t x, uint8_t y, uint8_t color_id)
 
 uint8_t verify()
 {
-  // row verification
-  uint8_t verified = 1;
+  // column verification
   for (int x  = 0; x < 9; x++)
   {
     uint8_t items[9] = {0};
     for (int y = 0; y < 9; y++)
     {
-
+      if (items[board[x][y].color_id] == 1)
+      {
+        return 0;
+      }
+      else
+      {
+        items[board[x][y].color_id] = 1;
+      }
     }
   }
-  // column verification
+  // row verification
+  for (int y  = 0; y < 9; y++)
+  {
+    uint8_t items[9] = {0};
+    for (int x = 0; x < 9; x++)
+    {
+      if (items[board[x][y].color_id] == 1)
+      {
+        return 0;
+      }
+      else
+      {
+        items[board[x][y].color_id] = 1;
+      }
+    }
+  }
   // sector verification
+  for (int x_sector = 0; x_sector < 3; x_sector++)
+  {
+    for (int y_sector = 0; y_sector < 3; y_sector++)
+    {
+      uint8_t items[9] = {0};
+      for (int x = 0; x < 3; x++)
+      {
+        for (int y = 0; y < 3; y++)
+        {
+          if (items[board[x + x_sector*3][y + y_sector*3].color_id] == 1)
+          {
+            return 0;
+          }
+          else
+          {
+            items[board[x + x_sector*3][y + y_sector*3].color_id] = 1;
+          }
+        }
+      }
+    }
+  }
+  return 1;
 }
 
 void check_focus()
