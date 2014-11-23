@@ -33,6 +33,8 @@ uint32_t colors[10];
 uint8_t focus_x,focus_y;
 uint16_t last_potentionmeter_level;
 
+File puzzles;
+
 void write_pixel(uint8_t x, uint8_t y, uint8_t color_id)
 {
   if (!board[x][y].device)
@@ -70,13 +72,13 @@ uint8_t verify()
     uint8_t items[9] = {0};
     for (int y = 0; y < 9; y++)
     {
-      if (items[board[x][y].color_id - 1] == 1)
+      if (items[board[x][y].color_id] == 1)
       {
         return 0;
       }
       else
       {
-        items[board[x][y].color_id - 1] = 1;
+        items[board[x][y].color_id] = 1;
       }
     }
   }
@@ -86,13 +88,13 @@ uint8_t verify()
     uint8_t items[9] = {0};
     for (int x = 0; x < 9; x++)
     {
-      if (items[board[x][y].color_id - 1] == 1)
+      if (items[board[x][y].color_id] == 1)
       {
         return 0;
       }
       else
       {
-        items[board[x][y].color_id - 1] = 1;
+        items[board[x][y].color_id] = 1;
       }
     }
   }
@@ -106,13 +108,13 @@ uint8_t verify()
       {
         for (int y = 0; y < 3; y++)
         {
-          if (items[board[x + x_sector*3][y + y_sector*3].color_id - 1] == 1)
+          if (items[board[x + x_sector*3][y + y_sector*3].color_id] == 1)
           {
             return 0;
           }
           else
           {
-            items[board[x + x_sector*3][y + y_sector*3].color_id - 1] = 1;
+            items[board[x + x_sector*3][y + y_sector*3].color_id] = 1;
           }
         }
       }
