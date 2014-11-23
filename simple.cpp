@@ -28,7 +28,7 @@ typedef struct {
 } pixel;
 
 pixel board[9][9];
-uint32_t colors[9];
+uint32_t colors[10];
 
 uint8_t focus_x,focus_y;
 uint16_t last_potentionmeter_level;
@@ -53,8 +53,11 @@ void write_pixel(uint8_t x, uint8_t y, uint8_t color_id)
   }
   else
   {
+    char color[1]
+    char led[2] = (char)board[x][y].led
+    Serial1.write(command)
     //write remote
-    //char str[4] = {"W", x, y, color_id};
+    //char str[4] = {"W", led, color_id};
     //Serial1.write(str);
   }
 }
@@ -67,13 +70,13 @@ uint8_t verify()
     uint8_t items[9] = {0};
     for (int y = 0; y < 9; y++)
     {
-      if (items[board[x][y].color_id] == 1)
+      if (items[board[x][y].color_id - 1] == 1)
       {
         return 0;
       }
       else
       {
-        items[board[x][y].color_id] = 1;
+        items[board[x][y].color_id - 1] = 1;
       }
     }
   }
@@ -83,13 +86,13 @@ uint8_t verify()
     uint8_t items[9] = {0};
     for (int x = 0; x < 9; x++)
     {
-      if (items[board[x][y].color_id] == 1)
+      if (items[board[x][y].color_id - 1] == 1)
       {
         return 0;
       }
       else
       {
-        items[board[x][y].color_id] = 1;
+        items[board[x][y].color_id - 1] = 1;
       }
     }
   }
@@ -103,13 +106,13 @@ uint8_t verify()
       {
         for (int y = 0; y < 3; y++)
         {
-          if (items[board[x + x_sector*3][y + y_sector*3].color_id] == 1)
+          if (items[board[x + x_sector*3][y + y_sector*3].color_id - 1] == 1)
           {
             return 0;
           }
           else
           {
-            items[board[x + x_sector*3][y + y_sector*3].color_id] = 1;
+            items[board[x + x_sector*3][y + y_sector*3].color_id - 1] = 1;
           }
         }
       }
@@ -143,6 +146,9 @@ void setup() {
   Serial.begin(9600);
   Serial1.begin(9600);
 
+  // Clear client
+  Serial1.write('CE'); 
+
   // WHITE IS RESERVED FOR ERRORS
   colors[0] = shield.Color(20,2,12);   // Pink
   colors[1] = shield.Color(20,0,0);    // Red
@@ -153,6 +159,7 @@ void setup() {
   colors[6] = shield.Color(0,20,20);   // Cyan
   colors[7] = shield.Color(0,0,20);    // Blue
   colors[8] = shield.Color(10,0,20);   // Purple
+  colors[9] = shield.Color(20,20,20);  // White
   
 
   // Define where all LEDS are
@@ -167,11 +174,6 @@ void setup() {
       board[width][depth].led = 32 + depth - SHIELD_DEPTH*width;
     }
   }
-  for (int i = 0; i < 9; i++)
-  {
-    shield.setPixelColor(i, colors[i]);
-  }
-  shield.show();
   for (int width = SHIELD_WIDTH; width < 9; width++)
   {
     for (int depth = 0; depth < SHIELD_DEPTH; depth++)

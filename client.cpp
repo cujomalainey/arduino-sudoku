@@ -10,7 +10,7 @@
 
 Adafruit_NeoPixel shield = Adafruit_NeoPixel(NUMPIXELS_SHIELD, PIN_SHIELD, NEO_GRB + NEO_KHZ800);
 
-uint32_t colors[9];
+uint32_t colors[10];
 
 uint8_t focus_x,focus_y;
 uint16_t last_potentionmeter_level;
@@ -35,6 +35,7 @@ void setup() {
   colors[6] = shield.Color(0,20,20);   // Cyan
   colors[7] = shield.Color(0,0,20);    // Blue
   colors[8] = shield.Color(10,0,20);   // Purple
+  colors[9] = shield.Color(20,20,20);  // White
 }
 
 void loop() {
@@ -44,6 +45,15 @@ void loop() {
     if (command == 'W')
     {
       // write pixel
+      char led[2];
+      char color_id[1];
+      if (Serial1.readBytes( (char*)&led, 2 ) == 2)
+      {
+        if (Serial1.readBytes( (char*)&color_id, 1 ) == 1)
+        {
+          shield.setPixelColor(led, colors[color_id]);
+        }
+      }
     }
     else if (command == 'E')
     {
