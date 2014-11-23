@@ -167,7 +167,6 @@ void setup() {
       board[width][depth].led = 32 + depth - SHIELD_DEPTH*width;
     }
   }
-  shield.show();
   for (int i = 0; i < 9; i++)
   {
     shield.setPixelColor(i, colors[i]);
