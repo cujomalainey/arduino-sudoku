@@ -34,6 +34,11 @@ uint8_t focus_x,focus_y;
 uint16_t last_potentionmeter_level;
 
 File puzzles;
+// file is formated in this fashion
+// 1 2 3 4 5 6 7 8 9...81
+//
+// 1 2 3 4 5 6 7 8 9
+// 10 11 12
 
 void write_pixel(uint8_t x, uint8_t y, uint8_t color_id)
 {

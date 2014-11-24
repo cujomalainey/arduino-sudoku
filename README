@@ -11,19 +11,11 @@ Date: Nov. 10, 2014
 -----------------------------------------------
 Acknowledgements: 
 
-Calvin Beck provided us with an error catching function that locks the program in the event of an SD card read error. Pay attention to the Serial monitor for this occurrence.
-
-Multiple functions that are being used are provided in class such as:
-- quicksort()
-
-Some functions that were provided on eclass:
-- x_to_lon()
-- y_to_lat()
+The puzzle library was posted on the web here http://www2.warwick.ac.uk/fac/sci/moac/people/students/peter_cock/python/sudoku/ we are simply importing it.
 
 ------------------------------------------------
 Description: 
-This program displays the map of Edmonton in sections and allows a joystick cursor to scroll between the 16x16 sections. When the joystick is pressed the program displays the closest restaurants based on latitude and longitude and can be scrolled through. Upon repress of the joystick the program reverts to the map scrolling mode.
-Scrolling of the restaurants can be utilized with "up" and "down" movements of the joystick.
+
 
 ------------------------------------------------ 
 Wiring
@@ -50,27 +42,10 @@ Joystick Wiring
  - HORZ to Arduino analog pin A1
  - SEL to Arduino digital pin 9
  - GND to negative breadboard bus
-
-Rating LEDs Wiring
- - All 5 LEDs short (-) legs are connected to negative bus
- - All 5 LEDs long (+) legs are connected to 560 Ohm resistor
- - LED 1 connects to Pin 12 after resistor
- - LED 2 connects to Pin 11 after resistor
- - LED 3 connects to Pin 4 after resistor
- - LED 4 connects to Pin 3 after resistor
- - LED 5 connects to Pin 2 after resistor
  
  Potentiometer
  - Connect One Leg to the positive bus
  - Connect Opposite Leg to negative bus
  - Connect Middle Leg to Analog Input A2
  
------------------------------------------------
-Code Modification Dependent on Hardware
-
-During the development of the program, a black tab LCD screen was used. If during operation another tab LCD screen is used then the code in the setup() method needs to be appropriately changed:
-
-tft.initR(INITR_BLACKTAB);
-example for a red tab LCD: tft.initR(INITR_REDTAB);
-
 -----------------------------------------------
