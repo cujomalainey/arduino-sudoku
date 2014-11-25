@@ -17,9 +17,9 @@
 #define SHIELD_DEPTH          8
 #define SHIELD_WIDTH          5
 
-Adafruit_NeoPixel shield = Adafruit_NeoPixel(NUMPIXELS_SHIELD, PIN_SHIELD, NEO_GRB + NEO_KHZ800);
-Adafruit_NeoPixel stick1 = Adafruit_NeoPixel(NUMPIXELS_STICK, PIN_STICK_1, NEO_GRB + NEO_KHZ800);
-Adafruit_NeoPixel stick2 = Adafruit_NeoPixel(NUMPIXELS_STICK, PIN_STICK_2, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel shields[3]= { Adafruit_NeoPixel(NUMPIXELS_SHIELD, PIN_SHIELD, NEO_GRB + NEO_KHZ800),
+  Adafruit_NeoPixel(NUMPIXELS_STICK, PIN_STICK_1, NEO_GRB + NEO_KHZ800),
+  Adafruit_NeoPixel(NUMPIXELS_STICK, PIN_STICK_2, NEO_GRB + NEO_KHZ800)};
 
 typedef struct {
   uint8_t device;
@@ -47,20 +47,8 @@ void write_pixel(uint8_t x, uint8_t y, uint8_t color_id)
   if (!board[x][y].device)
   {
     //write local
-    if (board[x][y].shield == 0)
-    {
-      shield.setPixelColor(board[x][y].led, colors[color_id]);
-      shield.show();
-    }
-    else if (board[x][y].shield == 1)
-    {
-      stick1.setPixelColor(board[x][y].led, colors[color_id]);
-      stick1.show();
-    }
-    else if (board[x][y].shield == 2)
-    {
-      stick2.show();
-    }
+    shields[board[x][y].shield].setPixelColor(board[x][y].led, colors[color_id]);
+    shields[board[x][y].shield].show();
   }
   else
   {
@@ -164,7 +152,12 @@ void check_color_change()
 }
 
 void setup() {
-  shield.begin(); // This initializes the NeoPixel library.
+  // This initializes the NeoPixel library.
+  for (int i = 0; i < 3; i++)
+  {
+    shields[i].begin();
+  }
+
   randomSeed(6798);
   Serial.begin(9600);
   Serial1.begin(9600);
@@ -173,17 +166,17 @@ void setup() {
   Serial1.write("CE"); 
 
   // WHITE IS RESERVED FOR ERRORS
-  colors[0] = shield.Color(20,2,12);   // Pink
-  colors[1] = shield.Color(20,0,0);    // Red
-  colors[2] = shield.Color(11,5,2);    // Brown
-  colors[3] = shield.Color(20,10,0);   // Orange
-  colors[4] = shield.Color(20,20,0);   // Yellow
-  colors[5] = shield.Color(0,20,0);    // Green
-  colors[6] = shield.Color(0,20,20);   // Cyan
-  colors[7] = shield.Color(0,0,20);    // Blue
-  colors[8] = shield.Color(10,0,20);   // Purple
-  colors[9] = shield.Color(20,20,20);  // White
-  colors[10] = shield.Color(0,0,0);    // OFF
+  colors[0] = shields[0].Color(20,2,12);   // Pink
+  colors[1] = shields[0].Color(20,0,0);    // Red
+  colors[2] = shields[0].Color(11,5,2);    // Brown
+  colors[3] = shields[0].Color(20,10,0);   // Orange
+  colors[4] = shields[0].Color(20,20,0);   // Yellow
+  colors[5] = shields[0].Color(0,20,0);    // Green
+  colors[6] = shields[0].Color(0,20,20);   // Cyan
+  colors[7] = shields[0].Color(0,0,20);    // Blue
+  colors[8] = shields[0].Color(10,0,20);   // Purple
+  colors[9] = shields[0].Color(20,20,20);  // White
+  colors[10] = shields[0].Color(0,0,0);    // OFF
   
 
   // Define where all LEDS are
