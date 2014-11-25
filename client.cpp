@@ -10,15 +10,7 @@
 
 Adafruit_NeoPixel shield = Adafruit_NeoPixel(NUMPIXELS_SHIELD, PIN_SHIELD, NEO_GRB + NEO_KHZ800);
 
-uint32_t colors[10];
-
-uint8_t focus_x,focus_y;
-uint16_t last_potentionmeter_level;
-
-void write_pixel(uint8_t x, uint8_t y, uint8_t color_id)
-{
-
-}
+uint32_t colors[11];
 
 void setup() {
   shield.begin(); // This initializes the NeoPixel library.
@@ -36,6 +28,7 @@ void setup() {
   colors[7] = shield.Color(0,0,20);    // Blue
   colors[8] = shield.Color(10,0,20);   // Purple
   colors[9] = shield.Color(20,20,20);  // White
+  colors[10] = shield.Color(0,0,0);    // OFF
 }
 
 void loop() {

@@ -1,11 +1,11 @@
-TARGET = 
+TARGET = display
 
 # Place your Arduino libs here! It's okay to not define this.
-#ARDUINO_LIBS = SoftwareSerial
+ARDUINO_LIBS = SPI Adafruit_GFX Adafruit_ST7735 \
+	Adafruit_SD Adafruit_SD/utility SD/utility UAUtils_lcd
 
 # Either set this here or type `make upload BOARD_TAG=uno`
 BOARD_TAG = mega2560 
-# BOARD_TAG = uno
 
 # if there is a ARDUINO_UA_ROOT environment variable, it defines the
 # root of the arduino_ua install.  If not, we assume it is in HOME
@@ -24,7 +24,7 @@ DEFINES := ${DEFINITIONS:%=-D%}
 # Define your compiler flags. Remember to `+=` the rule.
 #CFLAGS += -Wall -Werror -std=c99
 #CXXFLAGS += -Wall -Werror
-CPPFLAGS += $(DEFINES)
+CPPFLAGS += $(DEFINES) 
 
 # override the default optimization levels here
 # CPP_OPTIMIZE = -O0

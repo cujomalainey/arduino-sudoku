@@ -1,5 +1,7 @@
 #include <Arduino.h>
 #include "Adafruit_NeoPixel.h"
+#include <SD.h>
+#include <SPI.h>
 
 #define PIN_SHIELD            6
 #define PIN_STICK_1           50
@@ -28,7 +30,7 @@ typedef struct {
 } pixel;
 
 pixel board[9][9];
-uint32_t colors[10];
+uint32_t colors[11];
 
 uint8_t focus_x,focus_y;
 uint16_t last_potentionmeter_level;
@@ -47,10 +49,12 @@ void write_pixel(uint8_t x, uint8_t y, uint8_t color_id)
     //write local
     if (board[x][y].shield == 0)
     {
+      shield.setPixelColor(board[x][y].led, colors[color_id]);
       shield.show();
     }
     else if (board[x][y].shield == 1)
     {
+      stick1.setPixelColor(board[x][y].led, colors[color_id]);
       stick1.show();
     }
     else if (board[x][y].shield == 2)
@@ -60,12 +64,24 @@ void write_pixel(uint8_t x, uint8_t y, uint8_t color_id)
   }
   else
   {
-    char color[1]
-    char led[2] = (char)board[x][y].led
-    Serial1.write(command)
+    char color[1];
+    char led[2] = {(char)board[x][y].led};
+    //Serial1.write(command);
     //write remote
     //char str[4] = {"W", led, color_id};
     //Serial1.write(str);
+  }
+}
+
+// use to display entire grid
+void display_grid()
+{
+  for (int x = 0; x < 9; x++)
+  {
+    for (int y = 0; y < 9; y++)
+    {
+      write_pixel(x,y,board[x][y].color_id);
+    }
   }
 }
 
@@ -154,7 +170,7 @@ void setup() {
   Serial1.begin(9600);
 
   // Clear client
-  Serial1.write('CE'); 
+  Serial1.write("CE"); 
 
   // WHITE IS RESERVED FOR ERRORS
   colors[0] = shield.Color(20,2,12);   // Pink
@@ -167,6 +183,7 @@ void setup() {
   colors[7] = shield.Color(0,0,20);    // Blue
   colors[8] = shield.Color(10,0,20);   // Purple
   colors[9] = shield.Color(20,20,20);  // White
+  colors[10] = shield.Color(0,0,0);    // OFF
   
 
   // Define where all LEDS are
