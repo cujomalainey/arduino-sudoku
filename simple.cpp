@@ -32,7 +32,7 @@ typedef struct {
 pixel board[9][9];
 uint32_t colors[11];
 
-uint8_t focus_x,focus_y;
+uint8_t focus_x = 0,focus_y = 0;
 uint16_t last_potentionmeter_level;
 
 File puzzles;
@@ -146,7 +146,7 @@ void check_color_change()
     last_potentionmeter_level = analogRead(POTENTIONMETER_PIN) - last_potentionmeter_level > POTENTIONMETER_CHANGE ? last_potentionmeter_level + POTENTIONMETER_CHANGE : last_potentionmeter_level - POTENTIONMETER_CHANGE;
     if (!board[focus_x][focus_y].locked)
     {
-
+      //
     }
   }
 }
@@ -190,6 +190,7 @@ void setup() {
       board[width][depth].device = 0;
       board[width][depth].shield = 0;
       board[width][depth].led = 32 + depth - SHIELD_DEPTH*width;
+      board[width][depth].color_id = 10;
     }
   }
   // Define Client Shield
@@ -200,6 +201,7 @@ void setup() {
       board[width][depth].device = 1;
       board[width][depth].shield = 0;
       board[width][depth].led = 32 + depth - SHIELD_DEPTH*(width - SHIELD_WIDTH);
+      board[width][depth].color_id = 10;
     }
   }
   // Define Stick 1
@@ -207,6 +209,7 @@ void setup() {
   {
     board[i][8].device = 0;
     board[i][8].shield = 1;
+    board[i][8].color_id = 10;
   }
   board[0][8].led = 0;
   board[1][8].led = 1;
@@ -218,11 +221,15 @@ void setup() {
   {
     board[i][8].device = 0;
     board[i][8].shield = 2;
+    board[i][8].color_id = 10;
   }
   board[5][8].led = 0;
   board[6][8].led = 1;
   board[7][8].led = 3;
   board[8][8].led = 4;
+
+  // Clear Shields
+  display_grid();
 }
   
 
