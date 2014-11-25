@@ -16,24 +16,24 @@ pixel board[9][9];
 
 /*the following function takes two input arguments
  1- the file to read a pre-created sudoku puzzle from
- 2- a struct holding the values for each of the 81 elements in the Puzzle
+ 2- the line of the file to read the puzzle from (1<= line <= 1011)
 
 the function reads from the file and stores the appropriate values into the
 struct
 
 the function returns '0' if file loading fails, else it returns '1'
 */
-int loadPuzzle(char filename[55])
+int loadPuzzle(char filename[55], int line)
 {
   FILE * puzzle_file;
   char buffer[82];
   puzzle_file = fopen(filename, "rb");
   
   if(puzzle_file != NULL) {
-    fgets(buffer, 83, puzzle_file);
-    printf("%s", buffer);
-    fgets(buffer, 83, puzzle_file);
-    printf("%s", buffer);
+    
+    for(int i = 0; i < line; i++)
+      fgets(buffer, 83, puzzle_file);
+
     for(int i = 0; i < 9; i++) {
       for(int j = 0; j < 9; j++) {
         if(buffer[i*9 + j] != '.') {
@@ -73,6 +73,7 @@ void printBoard()
 
 int main()
 {
-  loadPuzzle("msk_009.txt");
+  int nPuzzle = 1;
+  loadPuzzle("msk_009.txt", nPuzzle);
   printBoard();
 }
