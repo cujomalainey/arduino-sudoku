@@ -187,6 +187,7 @@ void setup() {
   
 
   // Define where all LEDS are
+
   // Define primary shield
   // Shields address from the top left corner going down, this function maps them to an x,y grid
   for (int width = 0; width < SHIELD_WIDTH; width++)
@@ -198,6 +199,7 @@ void setup() {
       board[width][depth].led = 32 + depth - SHIELD_DEPTH*width;
     }
   }
+  // Define Client Shield
   for (int width = SHIELD_WIDTH; width < 9; width++)
   {
     for (int depth = 0; depth < SHIELD_DEPTH; depth++)
@@ -207,7 +209,29 @@ void setup() {
       board[width][depth].led = 32 + depth - SHIELD_DEPTH*(width - SHIELD_WIDTH);
     }
   }
+  // Define Stick 1
+  for (int i = 0; i < 5; ++i)
+  {
+    board[i][8].device = 0;
+    board[i][8].shield = 1;
+  }
+  board[0][8].led = 0;
+  board[1][8].led = 1;
+  board[2][8].led = 3;
+  board[3][8].led = 4;
+  board[4][8].led = 6;
+  // Define Stick 2
+  for (int i = 5; i < 9; ++i)
+  {
+    board[i][8].device = 0;
+    board[i][8].shield = 2;
+  }
+  board[5][8].led = 0;
+  board[6][8].led = 1;
+  board[7][8].led = 3;
+  board[8][8].led = 4;
 }
+  
 
 void loop() {
 }
