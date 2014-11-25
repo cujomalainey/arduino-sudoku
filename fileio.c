@@ -20,28 +20,45 @@ pixel board[9][9];
 
 the function reads from the file and stores the appropriate values into the
 struct
+
+the function returns '0' if file loading fails, else it returns '1'
 */
-void loadPuzzle(char filename[55])
+int loadPuzzle(char filename[55])
 {
   FILE * puzzle_file;
-  char buffer[81];
+  char buffer[82];
   puzzle_file = fopen(filename, "rb");
   
   if(puzzle_file != NULL) {
-    printf("REACHED!\n");
-    fgets(buffer, 81, puzzle_file);
+    fgets(buffer, 83, puzzle_file);
     printf("%s", buffer);
-
+    fgets(buffer, 83, puzzle_file);
+    printf("%s", buffer);
     for(int i = 0; i < 9; i++) {
       for(int j = 0; j < 9; j++) {
         if(buffer[i*9 + j] != '.') {
+	  //parse the next number from the buffer
           sscanf(&buffer[i*9 + j], "%1d", (int*)&board[i][j].color_id);
+	  //subtract the number by 1 to match colour ids
+	  board[i][j].color_id--;
         }
+	//if element is to be blank set colour white (id = 9)
+	else
+	  board[i][j].color_id = 9;
       }
     }
-  }
 
-  fclose(puzzle_file);
+    //close the file
+    fclose(puzzle_file);
+  }
+  //report error if file couldn't be opened
+  else
+  {
+    printf("Could not open file.");
+    return 0;
+  }
+  
+  return 1;
 }
 
 void printBoard()
