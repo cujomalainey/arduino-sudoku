@@ -44,7 +44,7 @@ void loop() {
       {
         if (Serial1.readBytes( (char*)&color_id, 1 ) == 1)
         {
-          shield.setPixelColor(led, colors[color_id]);
+          shield.setPixelColor(atoi(led), colors[atoi(color_id)]);
         }
       }
     }
