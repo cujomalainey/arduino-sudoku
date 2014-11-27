@@ -4,8 +4,8 @@
 #include <SPI.h>
 
 #define PIN_SHIELD            6
-#define PIN_STICK_1           54
-#define PIN_STICK_2           55
+#define PIN_STICK_1           48
+#define PIN_STICK_2           49
 
 #define POTENTIONMETER_PIN    10
 #define POTENTIONMETER_CHANGE 10
@@ -36,19 +36,6 @@ typedef struct {
 
 pixel board[9][9];
 uint32_t colors[11];
-
-uint8_t focus_x = 0,focus_y = 0;
-uint16_t last_potentionmeter_level;
-
-void printBoard()
-{
-  for(int i = 0; i < 9; i++) {
-    for(int j = 0; j < 9; j++) {
-      printf("%d ", board[i][j].color_id);
-    }
-    printf("\n");
-  }  
-}
 
 void write_pixel(uint8_t x, uint8_t y, uint8_t color_id)
 {
@@ -93,7 +80,7 @@ uint8_t check_empties(uint8_t * items)
   return 0;
 }
 
-uint8_t verify()
+uint8_t verify_check()
 {
   // column verification
   for (int x  = 0; x < 9; x++)
@@ -103,6 +90,7 @@ uint8_t verify()
     {
       if (items[board[x][y].color_id] == 1)
       {
+        Serial.println(board[x][y].color_id);
         return 0;
       }
       else
@@ -164,23 +152,38 @@ uint8_t verify()
   return 1;
 }
 
-void check_focus()
+void verify()
 {
-  // check if thumbstick wanting to move
-  // if yes, make sure old forcus pixel is set back to color
-  // start flashing new pixel
-}
-
-void check_color_change()
-{
-  if (analogRead(POTENTIONMETER_PIN) - last_potentionmeter_level > POTENTIONMETER_CHANGE || analogRead(POTENTIONMETER_PIN) - last_potentionmeter_level < -POTENTIONMETER_CHANGE)
+  if (verify_check())
   {
-    last_potentionmeter_level = analogRead(POTENTIONMETER_PIN) - last_potentionmeter_level > POTENTIONMETER_CHANGE ? last_potentionmeter_level + POTENTIONMETER_CHANGE : last_potentionmeter_level - POTENTIONMETER_CHANGE;
-    if (!board[focus_x][focus_y].locked)
+
+  }
+  else
+  {
+    for (int x = 0; x < 9; x++)
     {
-      //
+      for (int y = 0; y < 9; y++)
+      {
+        write_pixel(x,y,10);
+      }
+    }
+    for (int i = 0; i < 5; i++)
+    {
+      for (int x = 0; x < 9; x++)
+      {
+        write_pixel(x,x,1);
+        write_pixel(x,8-x,1);
+      }
+      delay(500);
+      for (int x = 0; x < 9; x++)
+      {
+        write_pixel(x,x,10);
+        write_pixel(x,8-x,10);
+      }
+      delay(500);
     }
   }
+  display_grid();
 }
 
 int load_puzzle(char filename[55], int line)
@@ -213,12 +216,6 @@ int load_puzzle(char filename[55], int line)
         //subtract the number by 1 to match colour ids
         board[i][j].color_id--;
         board[i][j].locked = 1;
-        Serial.print("X:");
-        Serial.print(i);
-        Serial.print(" Y:");
-        Serial.print(j);
-        Serial.print(" #:");
-        Serial.println(board[i][j].color_id);
         }
         //if element is to be blank set colour white (id = 9)
         else
@@ -339,12 +336,14 @@ void setup() {
   board[6][8].led = 1;
   board[7][8].led = 3;
   board[8][8].led = 4;
+  
   display_grid();
-  load_puzzle("msk_009.txt", random(1,1000));
+
+  load_puzzle("msk_009.txt", random(2,1000));
 
   // Clear Shields
   display_grid();
-
+  verify();
   // TODO if client is disconnected first request is refresh
   while (1)
   {
