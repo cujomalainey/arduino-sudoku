@@ -29,6 +29,13 @@ void setup() {
   colors[8] = shield.Color(10,0,20);   // Purple
   colors[9] = shield.Color(20,20,20);  // White
   colors[10] = shield.Color(0,0,0);    // OFF
+  for (int i = 0; i < NUMPIXELS_SHIELD, i++)
+  {
+    shield.setPixelColor(i, colors[10]);
+  }
+  shield.show();
+
+  // TODO call for refresh
 }
 
 void loop() {
@@ -53,7 +60,7 @@ void loop() {
       //erase all pixels
       for (int i = 0; i < NUMPIXELS_SHIELD; i++)
       {
-        shield.setPixelColor(i, 0);
+        shield.setPixelColor(i, colors[10]);
       }
       shield.show();
     }

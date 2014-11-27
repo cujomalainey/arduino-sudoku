@@ -186,8 +186,11 @@ void setup() {
   Serial.begin(9600);
   Serial1.begin(9600);
 
+  //TODO clear buffer for Serial1
+
   // Clear client
   Serial1.write("CE"); 
+  // TODO TIMEOUT function for client
 
   // WHITE IS RESERVED FOR ERRORS
   colors[0] = shields[0].Color(20,2,12);   // Pink
@@ -252,8 +255,18 @@ void setup() {
   board[7][8].led = 3;
   board[8][8].led = 4;
 
+  // load puzzle
+
   // Clear Shields
   display_grid();
+
+  // TODO if client is disconnected first request is refresh
+  while (1)
+  {
+    //check if button pressed
+    //  check if action is appropriate
+    //check for requests from client
+  }
 }
   
 
