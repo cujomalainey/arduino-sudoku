@@ -14,9 +14,7 @@
 
 #define DPAD_SEL              8
 #define COLOR_INC             7
-#define COLOR_DEC             6
-
-#define PUZZ_RESET            4
+#define COLOR_DEC             4
 
 #define NUMPIXELS_SHIELD      40
 
@@ -55,8 +53,8 @@ void write_pixel(uint8_t x, uint8_t y, uint8_t color_id)
   }
   else
   {
-    char color[1];
-    char led[2] = {(char)board[x][y].led};
+    char command[4] = {(char)color_id};
+    command + 2 = (char)board[x][y].led;
     //Serial1.write(command);
     //write remote
     //char str[4] = {"W", led, color_id};
@@ -375,7 +373,7 @@ void setup() {
   {
     uint8_t x = focus[0];
     uint8_t y = focus[1];
-
+    Serial.println(digitalRead(DPAD_UP));
     //turn on focus LED
     if(millis() - switchTime >= 500)
     {

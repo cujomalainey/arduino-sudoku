@@ -29,7 +29,7 @@ void setup() {
   colors[8] = shield.Color(10,0,20);   // Purple
   colors[9] = shield.Color(20,20,20);  // White
   colors[10] = shield.Color(0,0,0);    // OFF
-  for (int i = 0; i < NUMPIXELS_SHIELD, i++)
+  for (int i = 0; i < NUMPIXELS_SHIELD; i++)
   {
     shield.setPixelColor(i, colors[10]);
   }
@@ -45,8 +45,11 @@ void loop() {
     if (command == 'W')
     {
       // write pixel
-      char led[2];
-      char color_id[1];
+      char led[3];
+      char color_id[2];
+      Serial.print(led);
+      Serial.print(" ");
+      Serial.println(color_id);
       if (Serial1.readBytes( (char*)&led, 2 ) == 2)
       {
         if (Serial1.readBytes( (char*)&color_id, 1 ) == 1)
@@ -58,6 +61,7 @@ void loop() {
     else if (command == 'E')
     {
       //erase all pixels
+      Serial.println("ERASE");
       for (int i = 0; i < NUMPIXELS_SHIELD; i++)
       {
         shield.setPixelColor(i, colors[10]);
