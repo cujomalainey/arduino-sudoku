@@ -73,6 +73,18 @@ void display_grid()
   }
 }
 
+uint8_t check_empties(uint8_t * items)
+{
+  for (int i = 0; i < 9; i++)
+  {
+    if (!items[i])
+    {
+        return 1;
+    }
+  }
+  return 0;
+}
+
 uint8_t verify()
 {
   // column verification
@@ -90,6 +102,10 @@ uint8_t verify()
         items[board[x][y].color_id] = 1;
       }
     }
+    if(check_empties(items))
+    {
+      return 0;
+    }
   }
   // row verification
   for (int y  = 0; y < 9; y++)
@@ -105,6 +121,10 @@ uint8_t verify()
       {
         items[board[x][y].color_id] = 1;
       }
+    }
+    if(check_empties(items))
+    {
+      return 0;
     }
   }
   // sector verification
@@ -126,6 +146,10 @@ uint8_t verify()
             items[board[x + x_sector*3][y + y_sector*3].color_id] = 1;
           }
         }
+      }
+      if(check_empties(items))
+      {
+        return 0;
       }
     }
   }
