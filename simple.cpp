@@ -368,10 +368,57 @@ void setup() {
 
   // Clear Shields
   display_grid();
+  uint32_t switchTime = millis();
+  uint8_t focus[2] = {0, 0};
+
 
   // TODO if client is disconnected first request is refresh
   while (1)
   {
+    uint8_t x = focus[0];
+    uint8_t y = focus[1];
+
+    //turn on focus LED
+    if(switchTime >= 500)
+    {
+      if(board[x][y].color_id == 10)
+        write_pixel(x,y,board[x][y].color_id);
+      else
+        write_pixel(x,y,10);
+      switchTime = 0;
+    }
+    //Check controller updates  
+    //check for DPAD_UP
+    if(digitalRead(DPAD_UP)==LOW && focus[1]!=0 )
+    {
+      focus[1]--;
+      write_pixel(x,y,board[x][y].color_id);
+      while(digitalRead(DPAD_UP) == LOW);
+    }
+
+    //check for DPAD_DOWN
+    if(digitalRead(DPAD_DOWN)==LOW && focus[1]!=8 )
+    {
+      focus[1]++;
+      write_pixel(x,y,board[x][y].color_id);
+      while(digitalRead(DPAD_UP) == LOW);
+    }
+
+    //check for DPAD_RIGHT
+    if(digitalRead(DPAD_RIGHT)==LOW && focus[0]!=8 )
+    {
+      focus[0]++;
+      write_pixel(x,y,board[x][y].color_id);
+      while(digitalRead(DPAD_UP) == LOW);
+    }
+
+    //check for DPAD_LEFT
+    if(digitalRead(DPAD_UP)==LOW && focus[0]!=0 )
+    {
+      focus[0]--;
+      write_pixel(x,y,board[x][y].color_id);
+      while(digitalRead(DPAD_UP) == LOW);
+    }
     //check if button pressed
     //  check if action is appropriate
     //check for requests from client
