@@ -7,8 +7,16 @@
 #define PIN_STICK_1           54
 #define PIN_STICK_2           55
 
-#define POTENTIONMETER_PIN    10
-#define POTENTIONMETER_CHANGE 10
+#define DPAD_DOWN             12
+#define DPAD_LEFT             11
+#define DPAD_UP               10
+#define DPAD_RIGHT            9
+
+#define SELECT                8
+#define COLOR_INC             7
+#define COLOR_DEC             6
+
+#define PUZZ_RESET            4
 
 #define NUMPIXELS_SHIELD      40
 
