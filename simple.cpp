@@ -7,8 +7,16 @@
 #define PIN_STICK_1           48
 #define PIN_STICK_2           49
 
-#define POTENTIONMETER_PIN    10
-#define POTENTIONMETER_CHANGE 10
+#define DPAD_DOWN             12
+#define DPAD_LEFT             11
+#define DPAD_UP               10
+#define DPAD_RIGHT            9
+
+#define DPAD_SEL              8
+#define COLOR_INC             7
+#define COLOR_DEC             6
+
+#define PUZZ_RESET            4
 
 #define NUMPIXELS_SHIELD      40
 
@@ -287,6 +295,22 @@ void setup() {
   colors[9] = shields[0].Color(20,20,20);  // White
   colors[10] = shields[0].Color(0,0,0);    // OFF
   
+  //set the pin values for the Controller
+  pinMode(DPAD_DOWN, INPUT);
+  pinMode(DPAD_LEFT, INPUT);
+  pinMode(DPAD_UP, INPUT);
+  pinMode(DPAD_RIGHT, INPUT);
+  pinMode(DPAD_SEL, INPUT);
+  pinMode(COLOR_INC, INPUT);
+  pinMode(COLOR_DEC, INPUT);
+
+  digitalWrite(DPAD_DOWN, HIGH);
+  digitalWrite(DPAD_LEFT, HIGH);
+  digitalWrite(DPAD_UP, HIGH);
+  digitalWrite(DPAD_RIGHT, HIGH);
+  digitalWrite(DPAD_SEL, HIGH);
+  digitalWrite(COLOR_INC, HIGH);
+  digitalWrite(COLOR_DEC, HIGH);
 
   // Define where all LEDS are
 
@@ -343,10 +367,56 @@ void setup() {
 
   // Clear Shields
   display_grid();
-  verify();
+  uint32_t switchTime = millis();
+  uint8_t focus[2] = {0, 0};
+
   // TODO if client is disconnected first request is refresh
   while (1)
   {
+    uint8_t x = focus[0];
+    uint8_t y = focus[1];
+
+    //turn on focus LED
+    if(switchTime >= 500)
+    {
+      if(board[x][y].color_id == 10)
+        write_pixel(x,y,board[x][y].color_id);
+      else
+        write_pixel(x,y,10);
+      switchTime = 0;
+    }
+    //Check controller updates  
+    //check for DPAD_UP
+    if(digitalRead(DPAD_UP)==LOW && focus[1]!=0 )
+    {
+      focus[1]--;
+      write_pixel(x,y,board[x][y].color_id);
+      while(digitalRead(DPAD_UP) == LOW);
+    }
+
+    //check for DPAD_DOWN
+    if(digitalRead(DPAD_DOWN)==LOW && focus[1]!=8 )
+    {
+      focus[1]++;
+      write_pixel(x,y,board[x][y].color_id);
+      while(digitalRead(DPAD_UP) == LOW);
+    }
+
+    //check for DPAD_RIGHT
+    if(digitalRead(DPAD_RIGHT)==LOW && focus[0]!=8 )
+    {
+      focus[0]++;
+      write_pixel(x,y,board[x][y].color_id);
+      while(digitalRead(DPAD_UP) == LOW);
+    }
+
+    //check for DPAD_LEFT
+    if(digitalRead(DPAD_UP)==LOW && focus[0]!=0 )
+    {
+      focus[0]--;
+      write_pixel(x,y,board[x][y].color_id);
+      while(digitalRead(DPAD_UP) == LOW);
+    }
     //check if button pressed
     //  check if action is appropriate
     //check for requests from client
