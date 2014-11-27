@@ -377,13 +377,13 @@ void setup() {
     uint8_t y = focus[1];
 
     //turn on focus LED
-    if(switchTime >= 500)
+    if(millis() - switchTime >= 500)
     {
       if(board[x][y].color_id == 10)
         write_pixel(x,y,board[x][y].color_id);
       else
         write_pixel(x,y,10);
-      switchTime = 0;
+      switchTime = millis();
     }
     //Check controller updates  
     //check for DPAD_UP
