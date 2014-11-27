@@ -4,8 +4,8 @@
 #include <SPI.h>
 
 #define PIN_SHIELD            6
-#define PIN_STICK_1           50
-#define PIN_STICK_2           51
+#define PIN_STICK_1           54
+#define PIN_STICK_2           55
 
 #define POTENTIONMETER_PIN    10
 #define POTENTIONMETER_CHANGE 10
@@ -16,6 +16,11 @@
 
 #define SHIELD_DEPTH          8
 #define SHIELD_WIDTH          5
+
+const int RND_PIN = 2; 
+
+// standard U of A library settings, assuming Atmel Mega SPI pins
+#define SD_CS    5  // Chip select line for SD card
 
 Adafruit_NeoPixel shields[3]= { Adafruit_NeoPixel(NUMPIXELS_SHIELD, PIN_SHIELD, NEO_GRB + NEO_KHZ800),
   Adafruit_NeoPixel(NUMPIXELS_STICK, PIN_STICK_1, NEO_GRB + NEO_KHZ800),
@@ -35,12 +40,15 @@ uint32_t colors[11];
 uint8_t focus_x = 0,focus_y = 0;
 uint16_t last_potentionmeter_level;
 
-File puzzles;
-// file is formated in this fashion
-// 1 2 3 4 5 6 7 8 9...81
-//
-// 1 2 3 4 5 6 7 8 9
-// 10 11 12
+void printBoard()
+{
+  for(int i = 0; i < 9; i++) {
+    for(int j = 0; j < 9; j++) {
+      printf("%d ", board[i][j].color_id);
+    }
+    printf("\n");
+  }  
+}
 
 void write_pixel(uint8_t x, uint8_t y, uint8_t color_id)
 {
@@ -175,6 +183,75 @@ void check_color_change()
   }
 }
 
+int load_puzzle(char filename[55], int line)
+{
+  File puzzle_file;
+  char buffer[82];
+  puzzle_file = SD.open(filename, FILE_READ);
+  
+  if(puzzle_file != NULL) 
+  {
+    for(int i = 0; i < line; i++)
+    {
+      for (int c = 0; c < 82; c++)
+      {
+         buffer[c] = puzzle_file.read();
+      }
+    }
+    for (int x = 0; x < 81; x++)
+    {
+      Serial.print(buffer[x]);
+    }
+    for(int i = 0; i < 9; i++) 
+    {
+      for(int j = 0; j < 9; j++) 
+      {
+        if(buffer[j*9 + i] != '.') 
+        {
+        //parse the next number from the buffer
+        sscanf(&buffer[j*9 + i], "%1d", (int*)&board[i][j].color_id);
+        //subtract the number by 1 to match colour ids
+        board[i][j].color_id--;
+        board[i][j].locked = 1;
+        Serial.print("X:");
+        Serial.print(i);
+        Serial.print(" Y:");
+        Serial.print(j);
+        Serial.print(" #:");
+        Serial.println(board[i][j].color_id);
+        }
+        //if element is to be blank set colour white (id = 9)
+        else
+        {
+          board[i][j].color_id = 10;
+          board[i][j].locked = 0;
+        }
+      }
+    }
+
+    //close the file
+    puzzle_file.close();
+  }
+  //report error if file couldn't be opened
+  else
+  {
+    printf("Could not open file.");
+    return 0;
+  }
+  
+  return 1;
+}
+
+unsigned int random16bits() {
+  unsigned int a = 0;
+  for (int i=0; i<16; ++i) {
+    a<<=1;
+    a+=analogRead(RND_PIN)%2;
+    delay(50);
+  }
+  return a;
+}
+
 void setup() {
   // This initializes the NeoPixel library.
   for (int i = 0; i < 3; i++)
@@ -182,9 +259,17 @@ void setup() {
     shields[i].begin();
   }
 
-  randomSeed(6798);
+  randomSeed(random16bits());
   Serial.begin(9600);
   Serial1.begin(9600);
+
+  // Initialize SD Card
+  Serial.print("Initializing SD card...");
+  if (!SD.begin(SD_CS)) {
+    Serial.println("failed!");
+    while (1) {} // stuff exploded
+  }
+  Serial.println("");
 
   //TODO clear buffer for Serial1
 
@@ -254,8 +339,8 @@ void setup() {
   board[6][8].led = 1;
   board[7][8].led = 3;
   board[8][8].led = 4;
-
-  // load puzzle
+  display_grid();
+  load_puzzle("msk_009.txt", random(1,1000));
 
   // Clear Shields
   display_grid();
