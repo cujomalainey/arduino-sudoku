@@ -12,7 +12,7 @@
 #define DPAD_UP               10
 #define DPAD_RIGHT            9
 
-#define SELECT                8
+#define DPAD_SEL              8
 #define COLOR_INC             7
 #define COLOR_DEC             6
 
@@ -298,6 +298,22 @@ void setup() {
   colors[9] = shields[0].Color(20,20,20);  // White
   colors[10] = shields[0].Color(0,0,0);    // OFF
   
+  //set the pin values for the Controller
+  pinMode(DPAD_DOWN, INPUT);
+  pinMode(DPAD_LEFT, INPUT);
+  pinMode(DPAD_UP, INPUT);
+  pinMode(DPAD_RIGHT, INPUT);
+  pinMode(DPAD_SEL, INPUT);
+  pinMode(COLOR_INC, INPUT);
+  pinMode(COLOR_DEC, INPUT);
+
+  digitalWrite(DPAD_DOWN, HIGH);
+  digitalWrite(DPAD_LEFT, HIGH);
+  digitalWrite(DPAD_UP, HIGH);
+  digitalWrite(DPAD_RIGHT, HIGH);
+  digitalWrite(DPAD_SEL, HIGH);
+  digitalWrite(COLOR_INC, HIGH);
+  digitalWrite(COLOR_DEC, HIGH);
 
   // Define where all LEDS are
 
