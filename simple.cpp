@@ -12,7 +12,7 @@
 #define DPAD_UP               10
 #define DPAD_RIGHT            9
 
-#define DPAD_SEL              8
+#define DPAD_VERIFY           8
 #define COLOR_INC             7
 #define COLOR_DEC             4
 
@@ -296,7 +296,7 @@ void setup() {
   pinMode(DPAD_LEFT, INPUT);
   pinMode(DPAD_UP, INPUT);
   pinMode(DPAD_RIGHT, INPUT);
-  pinMode(DPAD_SEL, INPUT);
+  pinMode(DPAD_VERIFY, INPUT);
   pinMode(COLOR_INC, INPUT);
   pinMode(COLOR_DEC, INPUT);
 
@@ -304,7 +304,7 @@ void setup() {
   digitalWrite(DPAD_LEFT, HIGH);
   digitalWrite(DPAD_UP, HIGH);
   digitalWrite(DPAD_RIGHT, HIGH);
-  digitalWrite(DPAD_SEL, HIGH);
+  digitalWrite(DPAD_VERIFY, HIGH);
   digitalWrite(COLOR_INC, HIGH);
   digitalWrite(COLOR_DEC, HIGH);
 
@@ -365,12 +365,15 @@ void setup() {
   display_grid();
   uint32_t switchTime = millis();
   uint8_t focus[2] = {0, 0};
+  uint8_t SState = 1;
+
 
   // TODO if client is disconnected first request is refresh
   while (1)
   {
     uint8_t x = focus[0];
     uint8_t y = focus[1];
+    
     //turn on focus LED
     if (Serial1.available() > 0 && (char)Serial1.read() == 'U')
     {
@@ -378,43 +381,118 @@ void setup() {
     }
     if (millis() - switchTime >= 500)
     {
-      if(board[x][y].color_id == 10)
-        write_pixel(x,y,board[x][y].color_id);
+      //check if LED is LOCKED
+      //locked so flash white
+      if(board[x][y].locked == 1)
+      {
+        //check if color or white
+        //colored state
+        if(SState == 1)
+        {
+          write_pixel(x,y, 9);
+          SState = 0;
+          
+        }
+        //white state
+        else
+        {
+          write_pixel(x, y, board[x][y].color_id);
+          SState = 1;
+        }
+      }
+      //not locked switch between on and off
       else
-        write_pixel(x,y,10);
+      {
+        //check if turn on or turn off
+        //turn off LED
+        if(SState = 1)
+        {
+          write_pixel(x, y, 10);
+          SState = 0;
+          
+        }
+        //turn on LED
+        else
+        {
+          //does LED have a color assigned?
+          //has a color
+          if(board[x][y].color_id != 10)
+          {
+            write_pixel(x,y, board[x][y].color_id);
+            SState = 1;
+            
+          }
+          //doesn't have color -- flash white
+          else
+          {
+            write_pixel(x, y, 9);
+            SState = 1;
+            
+          }
+        }
+      }
       switchTime = millis();
     }
     //Check controller updates  
     //check for DPAD_UP
-    if(digitalRead(DPAD_UP)==LOW && focus[1]!=0 )
+    if(digitalRead(DPAD_UP)==LOW && focus[1]!=0)
     {
       focus[1]--;
       write_pixel(x,y,board[x][y].color_id);
+      SState = 1;
+      Serial.println("UP");
       while(digitalRead(DPAD_UP) == LOW);
     }
 
     //check for DPAD_DOWN
-    if(digitalRead(DPAD_DOWN)==LOW && focus[1]!=8 )
+    if(digitalRead(DPAD_DOWN)==LOW && focus[1]!=8)
     {
       focus[1]++;
       write_pixel(x,y,board[x][y].color_id);
-      while(digitalRead(DPAD_UP) == LOW);
+      SState = 1;
+      Serial.println("DOWN");
+      while(digitalRead(DPAD_DOWN) == LOW);
     }
 
     //check for DPAD_RIGHT
-    if(digitalRead(DPAD_RIGHT)==LOW && focus[0]!=8 )
+    if(digitalRead(DPAD_RIGHT)==LOW && focus[0]!=8)
     {
       focus[0]++;
       write_pixel(x,y,board[x][y].color_id);
-      while(digitalRead(DPAD_UP) == LOW);
+      SState = 1;
+      Serial.println("RIGHT");
+      while(digitalRead(DPAD_RIGHT) == LOW);
     }
 
     //check for DPAD_LEFT
-    if(digitalRead(DPAD_UP)==LOW && focus[0]!=0 )
+    if(digitalRead(DPAD_LEFT)==LOW && focus[0]!=0)
     {
       focus[0]--;
       write_pixel(x,y,board[x][y].color_id);
-      while(digitalRead(DPAD_UP) == LOW);
+      SState = 1;
+      Serial.println("LEFT");
+      while(digitalRead(DPAD_LEFT) == LOW);
+    }
+
+    //check for DPAD_VERIFY
+    if(digitalRead(DPAD_VERIFY)==LOW)
+    {
+      Serial.println("VERIFY");
+      while(digitalRead(DPAD_VERIFY) == LOW);
+    }
+
+    //check for COLOR_INC
+    if(digitalRead(COLOR_INC)==LOW)
+    {
+      Serial.println("INCRE");
+      while(digitalRead(COLOR_INC) == LOW);
+    }
+
+    //check for COLOR_DEC
+    if(digitalRead(COLOR_DEC)==LOW)
+    {
+      Serial.println("DECRE");
+      while(digitalRead(COLOR_DEC) == LOW);
     }
     //check if button pressed
     //  check if action is appropriate
