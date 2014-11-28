@@ -394,7 +394,7 @@ void setup() {
         //white state
         else
         {
-          write_pixel(x, y, board[x][y].color_id;
+          write_pixel(x, y, board[x][y].color_id);
           SState = 1;
         }
       }
