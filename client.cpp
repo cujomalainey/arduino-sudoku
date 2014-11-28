@@ -45,17 +45,13 @@ void loop() {
     if (command == 'W')
     {
       // write pixel
-      char led[3];
-      char color_id[2];
-      Serial.print(led);
-      Serial.print(" ");
-      Serial.println(color_id);
-      if (Serial1.readBytes( (char*)&led, 2 ) == 2)
+      int led;
+      int color_id;
+      if (Serial1.peek() == -1)
       {
-        if (Serial1.readBytes( (char*)&color_id, 1 ) == 1)
-        {
-          shield.setPixelColor(atoi(led), colors[atoi(color_id)]);
-        }
+        led = Serial1.read();
+        color_id = Serial1.read();
+        shield.setPixelColor(led, colors[color_id]);
       }
     }
     else if (command == 'E')
@@ -67,6 +63,10 @@ void loop() {
         shield.setPixelColor(i, colors[10]);
       }
       shield.show();
+    }
+    else
+    {
+      Serial1.write('U');
     }
   }
 }

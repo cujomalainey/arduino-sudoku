@@ -53,12 +53,9 @@ void write_pixel(uint8_t x, uint8_t y, uint8_t color_id)
   }
   else
   {
-    char command[4] = {(char)color_id};
-    command + 2 = (char)board[x][y].led;
-    //Serial1.write(command);
-    //write remote
-    //char str[4] = {"W", led, color_id};
-    //Serial1.write(str);
+    Serial1.write("CW");
+    Serial1.write(board[x][y].led);
+    Serial1.write(color_id);
   }
 }
 
@@ -162,7 +159,7 @@ void verify()
 {
   if (verify_check())
   {
-
+    // TODO MAKE GREEN
   }
   else
   {
@@ -265,6 +262,7 @@ void setup() {
   randomSeed(random16bits());
   Serial.begin(9600);
   Serial1.begin(9600);
+  Serial2.begin(9600);
 
   // Initialize SD Card
   Serial.print("Initializing SD card...");
@@ -361,7 +359,7 @@ void setup() {
   
   display_grid();
 
-  load_puzzle("msk_009.txt", random(2,1000));
+  load_puzzle("msk_009.txt", 1);//random(2,1000));
 
   // Clear Shields
   display_grid();
@@ -373,9 +371,12 @@ void setup() {
   {
     uint8_t x = focus[0];
     uint8_t y = focus[1];
-    Serial.println(digitalRead(DPAD_UP));
     //turn on focus LED
-    if(millis() - switchTime >= 500)
+    if (Serial1.available() > 0 && (char)Serial1.read() == 'U')
+    {
+      display_grid();
+    }
+    if (millis() - switchTime >= 500)
     {
       if(board[x][y].color_id == 10)
         write_pixel(x,y,board[x][y].color_id);
