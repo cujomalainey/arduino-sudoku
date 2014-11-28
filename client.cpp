@@ -48,18 +48,16 @@ void loop() {
     {
       // write pixel
       Serial1.read();
-      delay(15);
       uint8_t led;
       uint8_t color_id;
+      while (Serial1.available() < 1){}
         Serial.print("LED: ");
-        Serial.print(Serial1.peek());
-        led = Serial1.read();
-        delay(15);
+        Serial.print(Serial1.peek() - 2);
+        led = Serial1.read() - 2;
+        while (Serial1.available() < 1){}
         Serial.print(" ID: ");
-        Serial.print(Serial1.peek());
-        color_id = Serial1.read();
-        color_id--;
-        led--;
+        color_id = Serial1.read() - 2;
+        Serial.println(color_id);
         shield.setPixelColor(led, colors[color_id]);
         shield.show();
     }
