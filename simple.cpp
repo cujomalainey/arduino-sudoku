@@ -440,9 +440,9 @@ void setup() {
     }
     //Check controller updates  
     //check for DPAD_UP
-    if(digitalRead(DPAD_UP)==LOW && focus[1]!=0)
+    if(digitalRead(DPAD_UP)==LOW /*&& focus[1]!=0*/)
     {
-      focus[1]--;
+      //focus[1]--;
       write_pixel(x,y,board[x][y].color_id);
       SState = 1;
       Serial.println("UP");
@@ -450,9 +450,9 @@ void setup() {
     }
 
     //check for DPAD_DOWN
-    if(digitalRead(DPAD_DOWN)==LOW && focus[1]!=8)
+    if(digitalRead(DPAD_DOWN)==LOW /*&& focus[1]!=8*/)
     {
-      focus[1]++;
+      //focus[1]++;
       write_pixel(x,y,board[x][y].color_id);
       SState = 1;
       Serial.println("DOWN");
@@ -460,9 +460,9 @@ void setup() {
     }
 
     //check for DPAD_RIGHT
-    if(digitalRead(DPAD_RIGHT)==LOW && focus[0]!=8)
+    if(digitalRead(DPAD_RIGHT)==LOW /*&& focus[0]!=8*/)
     {
-      focus[0]++;
+      //focus[0]++;
       write_pixel(x,y,board[x][y].color_id);
       SState = 1;
       Serial.println("RIGHT");
@@ -470,9 +470,9 @@ void setup() {
     }
 
     //check for DPAD_LEFT
-    if(digitalRead(DPAD_LEFT)==LOW && focus[0]!=0)
+    if(digitalRead(DPAD_LEFT)==LOW /*&& focus[0]!=0*/)
     {
-      focus[0]--;
+      //focus[0]--;
       write_pixel(x,y,board[x][y].color_id);
       SState = 1;
       Serial.println("LEFT");
