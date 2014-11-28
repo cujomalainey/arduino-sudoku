@@ -39,24 +39,34 @@ void setup() {
 }
 
 void loop() {
-  if (Serial1.available() > 0 && Serial1.read() == 'C')
+  //Serial.println(Serial1.available());
+  if (Serial1.available() > 0 && (char)Serial1.read() == 'C')
   {
-    char command = (char)Serial1.read();
-    if (command == 'W')
+    delay(10);
+    Serial.println((char)Serial1.peek());
+    if ((char)Serial1.peek() == 'W')
     {
       // write pixel
-      int led;
-      int color_id;
-      if (Serial1.peek() == -1)
-      {
+      Serial1.read();
+      delay(15);
+      uint8_t led;
+      uint8_t color_id;
+        Serial.print("LED: ");
+        Serial.print(Serial1.peek());
         led = Serial1.read();
+        delay(15);
+        Serial.print(" ID: ");
+        Serial.print(Serial1.peek());
         color_id = Serial1.read();
+        color_id--;
+        led--;
         shield.setPixelColor(led, colors[color_id]);
-      }
+        shield.show();
     }
-    else if (command == 'E')
+    else if ((char)Serial1.peek() == 'E')
     {
       //erase all pixels
+      Serial1.read();
       Serial.println("ERASE");
       for (int i = 0; i < NUMPIXELS_SHIELD; i++)
       {
@@ -66,7 +76,8 @@ void loop() {
     }
     else
     {
-      Serial1.write('U');
+      Serial1.read();
+      //Serial1.write('U');
     }
   }
 }
