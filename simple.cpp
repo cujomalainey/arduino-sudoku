@@ -160,19 +160,43 @@ uint8_t verify_check()
 
 void verify()
 {
-  if (verify_check())
-  {
-    // TODO MAKE GREEN
-  }
-  else
-  {
-    for (int x = 0; x < 9; x++)
+  for (int x = 0; x < 9; x++)
     {
       for (int y = 0; y < 9; y++)
       {
         write_pixel(x,y,10);
       }
     }
+  if (verify_check())
+  {
+    for (int i = 0; i < 5; i++)
+    {
+      for (int x = 0; x < 9; x++)
+      {
+        write_pixel(x, 0, 5);
+        write_pixel(x, 8, 5);
+      }
+      for (int y = 0; y < 9; y++)
+      {
+        write_pixel(0, y, 5);
+        write_pixel(8, y, 5);
+      }
+      delay(500);
+      for (int x = 0; x < 9; x++)
+      {
+        write_pixel(x, 0, 10);
+        write_pixel(x, 8, 10);
+      }
+      for (int y = 0; y < 9; y++)
+      {
+        write_pixel(0, y, 10);
+        write_pixel(8, y, 10);
+      }
+      delay(500);
+    }
+  }
+  else
+  {
     for (int i = 0; i < 5; i++)
     {
       for (int x = 0; x < 9; x++)
@@ -362,10 +386,11 @@ void setup() {
   
   display_grid();
 
-  load_puzzle("msk_009.txt", random(2,1000));
+  load_puzzle("msk_009.txt", 1);//random(2,1000));
 
   // Clear Shields
   display_grid();
+
   uint32_t switchTime = millis();
   uint8_t focus[2] = {0, 0};
   uint8_t SState = 1;
