@@ -505,6 +505,7 @@ void setup() {
     //check for DPAD_VERIFY
     if(digitalRead(DPAD_VERIFY)==LOW)
     {
+      verify();
       Serial.println("VERIFY");
       while(digitalRead(DPAD_VERIFY) == LOW);
     }
