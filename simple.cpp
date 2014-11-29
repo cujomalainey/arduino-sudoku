@@ -53,14 +53,12 @@ void write_pixel(uint8_t x, uint8_t y, uint8_t color_id)
   }
   else
   {
+    // delay to prevent buffer overflow
+    delay(15);
     Serial1.write('C');
     Serial1.write('W');
-    Serial.print("W LED:");
-    Serial1.write(board[x][y].led + 2);
-    Serial.print(board[x][y].led);
-    Serial.print(" COLOR:");
-    Serial1.write(color_id + 2);
-    Serial.println(color_id);
+    Serial1.write(board[x][y].led + 1);
+    Serial1.write(color_id + 1);
   }
 }
 
@@ -364,7 +362,7 @@ void setup() {
   
   display_grid();
 
-  load_puzzle("msk_009.txt", 1);//random(2,1000));
+  load_puzzle("msk_009.txt", random(2,1000));
 
   // Clear Shields
   display_grid();
@@ -410,7 +408,7 @@ void setup() {
       {
         //check if turn on or turn off
         //turn off LED
-        if(SState = 1)
+        if(SState == 1)
         {
           write_pixel(x, y, 10);
           SState = 0;

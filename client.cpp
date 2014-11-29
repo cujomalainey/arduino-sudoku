@@ -42,7 +42,7 @@ void loop() {
   //Serial.println(Serial1.available());
   if (Serial1.available() > 0 && (char)Serial1.read() == 'C')
   {
-    delay(10);
+    while (Serial1.available() < 1){}
     Serial.println((char)Serial1.peek());
     if ((char)Serial1.peek() == 'W')
     {
@@ -52,11 +52,11 @@ void loop() {
       uint8_t color_id;
       while (Serial1.available() < 1){}
         Serial.print("LED: ");
-        Serial.print(Serial1.peek() - 2);
-        led = Serial1.read() - 2;
+        Serial.print(Serial1.peek() - 1);
+        led = Serial1.read() - 1;
         while (Serial1.available() < 1){}
         Serial.print(" ID: ");
-        color_id = Serial1.read() - 2;
+        color_id = Serial1.read() - 1;
         Serial.println(color_id);
         shield.setPixelColor(led, colors[color_id]);
         shield.show();
