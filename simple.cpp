@@ -487,6 +487,34 @@ void setup() {
     //check for COLOR_INC
     if(digitalRead(COLOR_INC)==LOW)
     {
+      //make sure not a LOCKED LED
+      //it is a locked LED
+      if(board[x][y].locked == 1)
+      {
+        //dont need to do anything right now
+      }
+      //not locked LED
+      else
+      {
+        //check to see if it currently has color
+        if(board[x][y].color_id != 10)
+        {
+          //check to see if it is currently first color
+          if(board[x][y].color_id == 0)
+          {
+            board[x][y].color_id = 10;
+          }
+          else
+          {
+            board[x][y].color_id--;
+          }
+        }
+        //doesn't have color then set to last color
+        else
+        {
+          board[x][y].color_id = 8;
+        }
+      }
       Serial.println("INCRE");
       while(digitalRead(COLOR_INC) == LOW);
     }
@@ -494,6 +522,35 @@ void setup() {
     //check for COLOR_DEC
     if(digitalRead(COLOR_DEC)==LOW)
     {
+      //make sure not a LOCKED LED
+      //it is a locked LED
+      if(board[x][y].locked == 1)
+      {
+        //dont need to do anything right now
+      }
+      //not locked LED
+      else
+      {
+        //check to see if it currently has color
+        if(board[x][y].color_id != 10)
+        {
+          //check to see if it is currently last color
+          if(board[x][y].color_id == 8)
+          {
+            board[x][y].color_id = 10;
+          }
+          else
+          {
+            board[x][y].color_id++;
+          }
+          
+        }
+        //doesn't have color then set to first color	
+        else
+        {
+          board[x][y].color_id = 0;
+        }
+      }
       Serial.println("DECRE");
       while(digitalRead(COLOR_DEC) == LOW);
     }
