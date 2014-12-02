@@ -386,7 +386,7 @@ void setup() {
   
   display_grid();
 
-  load_puzzle("msk_009.txt", 1);//random(2,1000));
+  load_puzzle("msk_009.txt", random(2,1000));
 
   // Clear Shields
   display_grid();
@@ -407,7 +407,7 @@ void setup() {
     {
       display_grid();
     }
-    if (millis() - switchTime >= 500)
+    if (millis() - switchTime >= 200)
     {
       //check if LED is LOCKED
       //locked so flash white
@@ -468,7 +468,6 @@ void setup() {
       focus[1]--;
       write_pixel(x,y,board[x][y].color_id);
       SState = 1;
-      Serial.println("UP");
       while(digitalRead(DPAD_UP) == LOW);
     }
 
@@ -478,7 +477,6 @@ void setup() {
       focus[1]++;
       write_pixel(x,y,board[x][y].color_id);
       SState = 1;
-      Serial.println("DOWN");
       while(digitalRead(DPAD_DOWN) == LOW);
     }
 
@@ -488,7 +486,6 @@ void setup() {
       focus[0]++;
       write_pixel(x,y,board[x][y].color_id);
       SState = 1;
-      Serial.println("RIGHT");
       while(digitalRead(DPAD_RIGHT) == LOW);
     }
 
@@ -498,7 +495,6 @@ void setup() {
       focus[0]--;
       write_pixel(x,y,board[x][y].color_id);
       SState = 1;
-      Serial.println("LEFT");
       while(digitalRead(DPAD_LEFT) == LOW);
     }
 
@@ -506,7 +502,6 @@ void setup() {
     if(digitalRead(DPAD_VERIFY)==LOW)
     {
       verify();
-      Serial.println("VERIFY");
       while(digitalRead(DPAD_VERIFY) == LOW);
     }
 
@@ -541,7 +536,6 @@ void setup() {
           board[x][y].color_id = 8;
         }
       }
-      Serial.println("INCRE");
       while(digitalRead(COLOR_INC) == LOW);
     }
 
@@ -577,7 +571,6 @@ void setup() {
           board[x][y].color_id = 0;
         }
       }
-      Serial.println("DECRE");
       while(digitalRead(COLOR_DEC) == LOW);
     }
     //check if button pressed

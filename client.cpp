@@ -43,7 +43,6 @@ void loop() {
   if (Serial1.available() > 0 && (char)Serial1.read() == 'C')
   {
     while (Serial1.available() < 1){}
-    Serial.println((char)Serial1.peek());
     if ((char)Serial1.peek() == 'W')
     {
       // write pixel
@@ -51,13 +50,9 @@ void loop() {
       uint8_t led;
       uint8_t color_id;
       while (Serial1.available() < 1){}
-        Serial.print("LED: ");
-        Serial.print(Serial1.peek() - 1);
         led = Serial1.read() - 1;
         while (Serial1.available() < 1){}
-        Serial.print(" ID: ");
         color_id = Serial1.read() - 1;
-        Serial.println(color_id);
         shield.setPixelColor(led, colors[color_id]);
         shield.show();
     }
@@ -65,17 +60,11 @@ void loop() {
     {
       //erase all pixels
       Serial1.read();
-      Serial.println("ERASE");
       for (int i = 0; i < NUMPIXELS_SHIELD; i++)
       {
         shield.setPixelColor(i, colors[10]);
       }
       shield.show();
-    }
-    else
-    {
-      Serial1.read();
-      //Serial1.write('U');
     }
   }
 }
