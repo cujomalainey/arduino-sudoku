@@ -3,6 +3,7 @@
 #include <SD.h>
 #include <SPI.h>
 
+
 #define PIN_SHIELD            6
 #define PIN_STICK_1           48
 #define PIN_STICK_2           49
