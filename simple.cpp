@@ -7,11 +7,11 @@
 #define PIN_STICK_1           48
 #define PIN_STICK_2           49
 
+//define controller pins
 #define DPAD_DOWN             12
 #define DPAD_LEFT             11
 #define DPAD_UP               10
 #define DPAD_RIGHT            9
-
 #define DPAD_VERIFY           8
 #define COLOR_INC             7
 #define COLOR_DEC             4
@@ -216,6 +216,11 @@ void verify()
   display_grid();
 }
 
+//This function reads a puzzle from a line in the specified file
+//it then stores the puzzle in the board[][] pixel array
+//Input parameters are a filename string and an int line
+//on successful loading of the puzzle it returns 1
+//otherwise it will return a value of 0
 int load_puzzle(char filename[55], int line)
 {
   File puzzle_file;
@@ -269,6 +274,7 @@ int load_puzzle(char filename[55], int line)
   return 1;
 }
 
+//this function generates a random unsigned int of 16 bits
 unsigned int random16bits() {
   unsigned int a = 0;
   for (int i=0; i<16; ++i) {
@@ -318,7 +324,7 @@ void setup() {
   colors[9] = shields[0].Color(20,20,20);  // White
   colors[10] = shields[0].Color(0,0,0);    // OFF
   
-  //set the pin values for the Controller
+  //define the pins for the controller to be inputs
   pinMode(DPAD_DOWN, INPUT);
   pinMode(DPAD_LEFT, INPUT);
   pinMode(DPAD_UP, INPUT);
@@ -326,7 +332,8 @@ void setup() {
   pinMode(DPAD_VERIFY, INPUT);
   pinMode(COLOR_INC, INPUT);
   pinMode(COLOR_DEC, INPUT);
-
+  //turn on the resistors to give a HIGH value when
+  //the buttons are not pressed
   digitalWrite(DPAD_DOWN, HIGH);
   digitalWrite(DPAD_LEFT, HIGH);
   digitalWrite(DPAD_UP, HIGH);
@@ -391,37 +398,45 @@ void setup() {
   // Clear Shields
   display_grid();
 
+  //get the time at which the LEDs are turned on
   uint32_t switchTime = millis();
+  //define the focused LED to be the top left corner one
   uint8_t focus[2] = {0, 0};
+  uint8_t x = focus[0];
+  uint8_t y = focus[1];
+  //define to be in ON state for LED
   uint8_t SState = 1;
 
 
   // TODO if client is disconnected first request is refresh
   while (1)
   {
-    uint8_t x = focus[0];
-    uint8_t y = focus[1];
+    //get x and y cordinates for focused LED
+    x = focus[0];
+    y = focus[1];
     
-    //turn on focus LED
+    //Display the LED grid
     if (Serial1.available() > 0 && (char)Serial1.read() == 'U')
     {
       display_grid();
     }
+    
+    //check if 200ms have passed since the focused LED switched from ON/OFF
     if (millis() - switchTime >= 200)
     {
       //check if LED is LOCKED
       //locked so flash white
       if(board[x][y].locked == 1)
       {
-        //check if color or white
-        //colored state
+        //check if currently displaying color or white
+        //displaying colored state so switch to displaying White
         if(SState == 1)
         {
           write_pixel(x,y, 9);
           SState = 0;
           
         }
-        //white state
+        //displaying white state so switch to Colour
         else
         {
           write_pixel(x, y, board[x][y].color_id);
@@ -432,14 +447,14 @@ void setup() {
       else
       {
         //check if turn on or turn off
-        //turn off LED
+        //currently on so turn off LED
         if(SState == 1)
         {
           write_pixel(x, y, 10);
           SState = 0;
           
         }
-        //turn on LED
+        //currently off so turn on LED
         else
         {
           //does LED have a color assigned?
@@ -455,14 +470,14 @@ void setup() {
           {
             write_pixel(x, y, 9);
             SState = 1;
-            
           }
         }
       }
+      //record time of the last switching between ON/OFF
       switchTime = millis();
     }
     //Check controller updates  
-    //check for DPAD_UP
+    //check for DPAD_UP pressed
     if(digitalRead(DPAD_UP)==LOW && focus[1]!=0)
     {
       focus[1]--;
@@ -471,7 +486,7 @@ void setup() {
       while(digitalRead(DPAD_UP) == LOW);
     }
 
-    //check for DPAD_DOWN
+    //check for DPAD_DOWN pressed
     if(digitalRead(DPAD_DOWN)==LOW && focus[1]!=8)
     {
       focus[1]++;
@@ -480,7 +495,7 @@ void setup() {
       while(digitalRead(DPAD_DOWN) == LOW);
     }
 
-    //check for DPAD_RIGHT
+    //check for DPAD_RIGHT pressed
     if(digitalRead(DPAD_RIGHT)==LOW && focus[0]!=8)
     {
       focus[0]++;
@@ -489,7 +504,7 @@ void setup() {
       while(digitalRead(DPAD_RIGHT) == LOW);
     }
 
-    //check for DPAD_LEFT
+    //check for DPAD_LEFT pressed
     if(digitalRead(DPAD_LEFT)==LOW && focus[0]!=0)
     {
       focus[0]--;
@@ -498,14 +513,14 @@ void setup() {
       while(digitalRead(DPAD_LEFT) == LOW);
     }
 
-    //check for DPAD_VERIFY
+    //check for DPAD_VERIFY pressed
     if(digitalRead(DPAD_VERIFY)==LOW)
     {
       verify();
       while(digitalRead(DPAD_VERIFY) == LOW);
     }
 
-    //check for COLOR_INC
+    //check for COLOR_INC pressed
     if(digitalRead(COLOR_INC)==LOW)
     {
       //make sure not a LOCKED LED
@@ -539,7 +554,7 @@ void setup() {
       while(digitalRead(COLOR_INC) == LOW);
     }
 
-    //check for COLOR_DEC
+    //check for COLOR_DEC pressed
     if(digitalRead(COLOR_DEC)==LOW)
     {
       //make sure not a LOCKED LED
@@ -573,9 +588,6 @@ void setup() {
       }
       while(digitalRead(COLOR_DEC) == LOW);
     }
-    //check if button pressed
-    //  check if action is appropriate
-    //check for requests from client
   }
 }
   
