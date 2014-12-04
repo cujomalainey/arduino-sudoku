@@ -29,24 +29,32 @@ void setup() {
   colors[8] = shield.Color(10,0,20);   // Purple
   colors[9] = shield.Color(20,20,20);  // White
   colors[10] = shield.Color(0,0,0);    // OFF
+
+  // clear grid on start
   for (int i = 0; i < NUMPIXELS_SHIELD; i++)
   {
     shield.setPixelColor(i, colors[10]);
   }
+  // must be called to push changes to the grid.
   shield.show();
-
-  // TODO call for refresh
 }
 
 void loop() {
-  //Serial.println(Serial1.available());
+  // check if data in the buffer and is valid
   if (Serial1.available() > 0 && (char)Serial1.read() == 'C')
   {
+    // wait for more data
     while (Serial1.available() < 1){}
+
+    // If next data is valid continue, otherwise return
     if ((char)Serial1.peek() == 'W')
     {
-      // write pixel
+      // write pixel to grid
+
+      // pop next buffer
       Serial1.read();
+
+      // get data from buffer
       uint8_t led;
       uint8_t color_id;
       while (Serial1.available() < 1){}
@@ -59,7 +67,11 @@ void loop() {
     else if ((char)Serial1.peek() == 'E')
     {
       //erase all pixels
+
+      // pop next buffer
       Serial1.read();
+
+      // clear all LEDs
       for (int i = 0; i < NUMPIXELS_SHIELD; i++)
       {
         shield.setPixelColor(i, colors[10]);

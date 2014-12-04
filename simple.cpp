@@ -3,6 +3,7 @@
 #include <SD.h>
 #include <SPI.h>
 
+// Define Pins for controls and LEDs
 
 #define PIN_SHIELD            6
 #define PIN_STICK_1           48
@@ -13,9 +14,12 @@
 #define DPAD_LEFT             11
 #define DPAD_UP               10
 #define DPAD_RIGHT            9
+
 #define DPAD_VERIFY           8
 #define COLOR_INC             7
 #define COLOR_DEC             4
+
+// Define code constants for LEDs
 
 #define NUMPIXELS_SHIELD      40
 
@@ -29,9 +33,13 @@ const int RND_PIN = 2;
 // standard U of A library settings, assuming Atmel Mega SPI pins
 #define SD_CS    5  // Chip select line for SD card
 
+// Initialize Adafruit NeoPixel Libraries
+
 Adafruit_NeoPixel shields[3]= { Adafruit_NeoPixel(NUMPIXELS_SHIELD, PIN_SHIELD, NEO_GRB + NEO_KHZ800),
   Adafruit_NeoPixel(NUMPIXELS_STICK, PIN_STICK_1, NEO_GRB + NEO_KHZ800),
   Adafruit_NeoPixel(NUMPIXELS_STICK, PIN_STICK_2, NEO_GRB + NEO_KHZ800)};
+
+// Struct to map leds to xy grid
 
 typedef struct {
   uint8_t device;
@@ -41,9 +49,13 @@ typedef struct {
   uint8_t locked;
 } pixel;
 
+// array of structs in xy style array
 pixel board[9][9];
+
+// array of preset colors
 uint32_t colors[11];
 
+// Handles writing pixel colors, determines device, pin and LED to command
 void write_pixel(uint8_t x, uint8_t y, uint8_t color_id)
 {
   if (!board[x][y].device)
@@ -56,6 +68,9 @@ void write_pixel(uint8_t x, uint8_t y, uint8_t color_id)
   {
     // delay to prevent buffer overflow
     delay(15);
+
+    // CW means command write then LED number and colors ID
+    // Serial port glitches when writing 0 so increment all numbers by 1 then send
     Serial1.write('C');
     Serial1.write('W');
     Serial1.write(board[x][y].led + 1);
@@ -63,7 +78,7 @@ void write_pixel(uint8_t x, uint8_t y, uint8_t color_id)
   }
 }
 
-// use to display entire grid
+// use to display entire grid based on data in pixel struct
 void display_grid()
 {
   for (int x = 0; x < 9; x++)
@@ -75,6 +90,7 @@ void display_grid()
   }
 }
 
+// returns empty element found returns 1, part of verification function
 uint8_t check_empties(uint8_t * items)
 {
   for (int i = 0; i < 9; i++)
@@ -87,6 +103,7 @@ uint8_t check_empties(uint8_t * items)
   return 0;
 }
 
+// verifies sudoku puzzle integrity
 uint8_t verify_check()
 {
   // column verification
@@ -97,7 +114,6 @@ uint8_t verify_check()
     {
       if (items[board[x][y].color_id] == 1)
       {
-        Serial.println(board[x][y].color_id);
         return 0;
       }
       else
@@ -159,8 +175,10 @@ uint8_t verify_check()
   return 1;
 }
 
+// animates display based on return of verify_check()
 void verify()
 {
+  // clear display
   for (int x = 0; x < 9; x++)
     {
       for (int y = 0; y < 9; y++)
@@ -170,6 +188,7 @@ void verify()
     }
   if (verify_check())
   {
+    // Write green O for pass
     for (int i = 0; i < 5; i++)
     {
       for (int x = 0; x < 9; x++)
@@ -198,6 +217,7 @@ void verify()
   }
   else
   {
+    // Write red X for fail
     for (int i = 0; i < 5; i++)
     {
       for (int x = 0; x < 9; x++)
@@ -268,7 +288,7 @@ int load_puzzle(char filename[55], int line)
   //report error if file couldn't be opened
   else
   {
-    printf("Could not open file.");
+    Serial.println("Could not open file.");
     return 0;
   }
   
@@ -287,12 +307,13 @@ unsigned int random16bits() {
 }
 
 void setup() {
-  // This initializes the NeoPixel library.
+  // This initializes the NeoPixels
   for (int i = 0; i < 3; i++)
   {
     shields[i].begin();
   }
 
+  // Seed RNG and being serial ports
   randomSeed(random16bits());
   Serial.begin(9600);
   Serial1.begin(9600);
@@ -305,12 +326,9 @@ void setup() {
   }
   Serial.println("");
 
-  //TODO clear buffer for Serial1
-
   // Clear client
   Serial1.write('C');
   Serial1.write('E'); 
-  // TODO TIMEOUT function for client
 
   // WHITE IS RESERVED FOR ERRORS
   colors[0] = shields[0].Color(20,2,12);   // Pink
@@ -325,7 +343,7 @@ void setup() {
   colors[9] = shields[0].Color(20,20,20);  // White
   colors[10] = shields[0].Color(0,0,0);    // OFF
   
-  //define the pins for the controller to be inputs
+  //set the pin values for the Controller
   pinMode(DPAD_DOWN, INPUT);
   pinMode(DPAD_LEFT, INPUT);
   pinMode(DPAD_UP, INPUT);
@@ -333,6 +351,7 @@ void setup() {
   pinMode(DPAD_VERIFY, INPUT);
   pinMode(COLOR_INC, INPUT);
   pinMode(COLOR_DEC, INPUT);
+
   //turn on the resistors to give a HIGH value when
   //the buttons are not pressed
   digitalWrite(DPAD_DOWN, HIGH);
@@ -391,12 +410,14 @@ void setup() {
   board[6][8].led = 1;
   board[7][8].led = 3;
   board[8][8].led = 4;
+
+  //clear grid
   
   display_grid();
 
   load_puzzle("msk_009.txt", random(2,1000));
 
-  // Clear Shields
+  // display puzzle
   display_grid();
 
   //get the time at which the LEDs are turned on
@@ -408,19 +429,11 @@ void setup() {
   //define to be in ON state for LED
   uint8_t SState = 1;
 
-
-  // TODO if client is disconnected first request is refresh
   while (1)
   {
     //get x and y cordinates for focused LED
     x = focus[0];
     y = focus[1];
-    
-    //Display the LED grid
-    if (Serial1.available() > 0 && (char)Serial1.read() == 'U')
-    {
-      display_grid();
-    }
     
     //check if 200ms have passed since the focused LED switched from ON/OFF
     if (millis() - switchTime >= 200)
