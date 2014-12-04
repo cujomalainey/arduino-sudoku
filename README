@@ -1,7 +1,6 @@
 -----------------------------------------------
 Course: CMPUT 274
-Assignment: 2
-Part: 1
+Assignment: Project
 Lab Section: EA1 
 Name: Curtis Malainey, Satyen Akolkar 
 CCID: cmalaine, akolkar
@@ -16,6 +15,7 @@ The puzzle library was posted on the web here http://www2.warwick.ac.uk/fac/sci/
 ------------------------------------------------
 Description: 
 
+This program is a colour sudoku puzzle. The user is given a random 9by9 pre-loaded puzzle where 9 colours represent the conventional 9 numbers. The user can navigate the puzzle using the DPAD controller and change the value using increment and decrement buttons. When the user is finished they can check if they are correct with a verify button.
 
 ------------------------------------------------ 
 Wiring
@@ -24,6 +24,17 @@ Breadboard General
  - Positive Bus Strip to Arduino +5V
  - Negative Bus Strip to Arduino GND
 
+Sudoku Controller using 8 button switches
+ - All button switches are connected to negative bus at one end the other end connection is specified below
+ - DPAD_DOWN to Arduino Pin 12
+ - DPAD_LEFT to Arduino Pin 11
+ - DPAD_UP to Arduino Pin 10
+ - DPAD_RIGHT to Arduino Pin 9
+ - DPAD_VERIFY to Arduino Pin 8
+ - COLOR_INC to Arduino Pin 7
+ - COLOR_DEC to Arduino Pin 4
+ - RESET to Arduino RST Pin
+ 
 LCD Screen Wiring
  - GND to breadboard negative bus
  - VCC to breadboard positive bus
@@ -35,17 +46,5 @@ LCD Screen Wiring
  - SCK to Arduino Pin 52
  - MISO to Arduino Pin 50
  - LITE to breadboard positive bus
-
-Joystick Wiring
- - VCC to breadboard positive bus
- - VERT to Arduino analog pin A0
- - HORZ to Arduino analog pin A1
- - SEL to Arduino digital pin 9
- - GND to negative breadboard bus
- 
- Potentiometer
- - Connect One Leg to the positive bus
- - Connect Opposite Leg to negative bus
- - Connect Middle Leg to Analog Input A2
  
 -----------------------------------------------
